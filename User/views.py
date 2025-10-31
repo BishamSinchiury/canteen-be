@@ -44,7 +44,7 @@ class UserViewSet(viewsets.ModelViewSet):
             samesite='Lax'
         )
 
-        return Response
+        return response
         
 
     # Custom route for logout
