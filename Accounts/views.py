@@ -48,6 +48,10 @@ class SaleViewSet(viewsets.ModelViewSet):
     filterset_fields = ['payment_type', 'creditor', 'created_at', 'updated_at']
     ordering_fields = ['price', 'created_at', 'updated_at']
 
+    def create(self, request, *args, **kwargs):
+        print(request.data)
+        return super().create(request, *args, **kwargs)
+
 class PurchaseViewSet(viewsets.ModelViewSet):
     queryset = Purchase.objects.all().select_related('item', 'unit', 'created_by', 'updated_by', 'vendor')
     serializer_class = PurchaseSerializer
