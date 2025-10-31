@@ -41,9 +41,9 @@ class UserViewSet(viewsets.ModelViewSet):
             key='sessionid',
             value=request.session.session_key,
             httponly=True,
-            samesite='Lax'
+            samesite='None',
+            secure=False
         )
-
         return response
         
 

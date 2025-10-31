@@ -4,6 +4,7 @@ from .views import ItemViewSet
 
 router = DefaultRouter()
 router.register(r'items', ItemViewSet, basename='item')
+router.register(r'nonfood', ItemViewSet, basename='nonfood')
 
 urlpatterns = [
     path('', include(router.urls)),

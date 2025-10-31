@@ -4,7 +4,8 @@ from rest_framework.routers import DefaultRouter
 from .views import (
     SaleViewSet, PurchaseViewSet,
     IncomeViewSet, ExpenseViewSet,
-    CreditorViewSet, VendorViewSet, CashAccountViewSet
+    CreditorViewSet, VendorViewSet, CashAccountViewSet,
+    CreditorNameIDViewSet, VendorNameIDViewSet
 )
 
 router = DefaultRouter()
@@ -15,6 +16,8 @@ router.register(r'expenses', ExpenseViewSet)
 router.register(r'creditors', CreditorViewSet)
 router.register(r'vendors', VendorViewSet)
 router.register(r'cash', CashAccountViewSet)
+router.register(r'creditors-names', CreditorNameIDViewSet, basename='creditor-names')
+router.register(r'vendors-names', VendorNameIDViewSet, basename='vendor-names')
 
 urlpatterns = [
     path('', include(router.urls)),

@@ -61,7 +61,7 @@ class Sale(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     payment_type = models.CharField(max_length=10, choices=PAYMENT_CHOICES)
     creditor = models.ForeignKey(Creditor, on_delete=models.SET_NULL, blank=True, null=True)
-
+    food_item = models.BooleanField(default=True)
     def save(self, *args, **kwargs):
         if not self.price:
             self.price = self.unit.price  # Fetch price from ItemUnit
@@ -86,7 +86,6 @@ class Purchase(models.Model):
         ('cash', 'Cash'),
         ('credit', 'Credit'),
     ]
-
     item = models.ForeignKey(Item, on_delete=models.CASCADE)
     unit = models.ForeignKey(ItemUnit, on_delete=models.CASCADE)
     price = models.FloatField()

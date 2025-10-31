@@ -1,12 +1,13 @@
 # accounts/views.py
-from rest_framework import viewsets, filters
+from rest_framework import viewsets, filters, permissions
 from django_filters.rest_framework import DjangoFilterBackend
 from .models import Sale, Purchase, Income, Expense, Creditor, Vendor, CashAccount
 from .serializers import (
     SaleSerializer, PurchaseSerializer,
     IncomeSerializer, ExpenseSerializer,
     CreditorSerializer, VendorSerializer,
-    CashAccountSerializer
+    CashAccountSerializer, SimpleVendorSerializer,
+    SimpleCreditorSerializer
 )
 
 # --------------------------
@@ -15,6 +16,7 @@ from .serializers import (
 class CreditorViewSet(viewsets.ModelViewSet):
     queryset = Creditor.objects.all()
     serializer_class = CreditorSerializer
+    permission_classes = [permissions.AllowAny]
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
     search_fields = ['name', 'contact_no']
     filterset_fields = ['account_balance']
@@ -23,6 +25,7 @@ class CreditorViewSet(viewsets.ModelViewSet):
 class VendorViewSet(viewsets.ModelViewSet):
     queryset = Vendor.objects.all()
     serializer_class = VendorSerializer
+    permission_classes = [permissions.AllowAny]
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
     search_fields = ['name', 'contact_no']
     filterset_fields = ['account_balance']
@@ -31,6 +34,7 @@ class VendorViewSet(viewsets.ModelViewSet):
 class CashAccountViewSet(viewsets.ModelViewSet):
     queryset = CashAccount.objects.all()
     serializer_class = CashAccountSerializer
+    permission_classes = [permissions.AllowAny]
 
 # --------------------------
 # Sale / Purchase
@@ -38,6 +42,7 @@ class CashAccountViewSet(viewsets.ModelViewSet):
 class SaleViewSet(viewsets.ModelViewSet):
     queryset = Sale.objects.all().select_related('item', 'unit', 'created_by', 'updated_by', 'creditor')
     serializer_class = SaleSerializer
+    permission_classes = [permissions.AllowAny]
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
     search_fields = ['item__name', 'unit__unit_name', 'created_by__username', 'creditor__name']
     filterset_fields = ['payment_type', 'creditor', 'created_at', 'updated_at']
@@ -46,6 +51,7 @@ class SaleViewSet(viewsets.ModelViewSet):
 class PurchaseViewSet(viewsets.ModelViewSet):
     queryset = Purchase.objects.all().select_related('item', 'unit', 'created_by', 'updated_by', 'vendor')
     serializer_class = PurchaseSerializer
+    permission_classes = [permissions.AllowAny]
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
     search_fields = ['item__name', 'unit__unit_name', 'created_by__username', 'vendor__name']
     filterset_fields = ['payment_type', 'vendor', 'created_at', 'updated_at']
@@ -57,6 +63,7 @@ class PurchaseViewSet(viewsets.ModelViewSet):
 class IncomeViewSet(viewsets.ModelViewSet):
     queryset = Income.objects.all().select_related('sale', 'creditor_payment')
     serializer_class = IncomeSerializer
+    permission_classes = [permissions.AllowAny]
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
     search_fields = ['description', 'sale__item__name', 'creditor_payment__name']
     filterset_fields = ['created_at', 'sale', 'creditor_payment', 'amount']
@@ -65,7 +72,24 @@ class IncomeViewSet(viewsets.ModelViewSet):
 class ExpenseViewSet(viewsets.ModelViewSet):
     queryset = Expense.objects.all().select_related('purchase', 'vendor_payment')
     serializer_class = ExpenseSerializer
+    permission_classes = [permissions.AllowAny]
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
     search_fields = ['description', 'purchase__item__name', 'vendor_payment__name']
     filterset_fields = ['created_at', 'purchase', 'vendor_payment', 'amount']
     ordering_fields = ['amount', 'created_at']
+
+class CreditorNameIDViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = Creditor.objects.all()
+    serializer_class = SimpleCreditorSerializer
+    permission_classes = [permissions.AllowAny]
+    filter_backends = [filters.SearchFilter, filters.OrderingFilter]
+    search_fields = ['name']
+    ordering_fields = ['name']
+
+class VendorNameIDViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = Vendor.objects.all()
+    serializer_class = SimpleVendorSerializer
+    permission_classes = [permissions.AllowAny]
+    filter_backends = [filters.SearchFilter, filters.OrderingFilter]
+    search_fields = ['name']
+    ordering_fields = ['name']

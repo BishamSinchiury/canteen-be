@@ -71,3 +71,13 @@ class ExpenseSerializer(serializers.ModelSerializer):
     class Meta:
         model = Expense
         fields = '__all__'
+
+class SimpleCreditorSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Creditor
+        fields = ['id', 'name']
+
+class SimpleVendorSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Vendor
+        fields = ['id', 'name']
